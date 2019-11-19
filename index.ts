@@ -31,7 +31,7 @@ const sum = (arr: Array<number>): number => {
 }
 
 const main = async () => {
-    const w = 1200;
+    const w = 800;
     const h = 800;
     const padding = 90;
 
