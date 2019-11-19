@@ -1,0 +1,18 @@
+{
+    "scripts": {
+        "start": "npx parcel index.html",
+        "build": "npx parcel build index.html"
+    },
+    "dependencies": {
+        "@types/d3": "^5.7.2",
+        "d3": "^5.14.1"
+    },
+    "devDependencies": {
+        "parcel": "^1.12.4",
+        "parcel-plugin-static-files-copy": "^2.2.1",
+        "typescript": "^3.7.2"
+    },
+    "staticFiles": {
+        "staticPath": "data"
+    }
+}
