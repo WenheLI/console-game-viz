@@ -43,7 +43,7 @@ const main = async () => {
                     .style('background', 'aliceblue')
 
     let data = await d3.csv('./videogames.csv');
-    console.log(data)
+    textArea.innerHTML = '';
     data = data.filter((it) => it['yearOfRelease'] !== 'N/A')
                 .filter((it) => it['yearOfRelease'] !== '2017')
                 .filter((it) => it['yearOfRelease'] !== '2020');
@@ -143,7 +143,7 @@ const main = async () => {
                     .attr('height', yScale(0))
                     .style('opacity', .5)
                     .style('fill', 'black')
-
+            textArea.innerHTML = '';
             textArea.innerHTML = `<p>This is ${d.year.getFullYear()} </p> <br > <p> The global sales are ${d.sales.toFixed(2)} millions</p> <br >`
                         
             d3.select(this)
