@@ -42,6 +42,14 @@ const main = async () => {
             top: window.innerHeight,
             behavior: 'smooth'
         })
+    });
+
+    const statsButton = document.getElementById('stats-button-img');
+    statsButton.addEventListener('click', () => {
+        scrollTo({
+            top: window.innerHeight * 2,
+            behavior: 'smooth'
+        })
     })
 
     const textArea = document.getElementById('text');
