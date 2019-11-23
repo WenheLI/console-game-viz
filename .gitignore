@@ -2,3 +2,5 @@ node_modules
 dist/
 .cache/
 public/
+.DS_Store
+*/.DS_Store
