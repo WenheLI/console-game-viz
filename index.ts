@@ -31,9 +31,18 @@ const sum = (arr: Array<number>): number => {
 }
 
 const main = async () => {
-    const w = 800;
-    const h = 800;
+    const w = window.innerWidth * .7;
+    const h = window.innerHeight;
     const padding = 90;
+
+    const nextButton = document.getElementById('next-button-img');
+    const displayDiv = document.getElementById('display');
+    nextButton.addEventListener('click', (e) => {
+        scrollTo({
+            top: window.innerHeight,
+            behavior: 'smooth'
+        })
+    })
 
     const textArea = document.getElementById('text');
 
@@ -43,10 +52,12 @@ const main = async () => {
                     .style('background', 'aliceblue')
 
     let data = await d3.csv('./videogames.csv');
-    textArea.innerHTML = '';
+
     data = data.filter((it) => it['yearOfRelease'] !== 'N/A')
                 .filter((it) => it['yearOfRelease'] !== '2017')
+                .filter((it) => it['yearOfRelease'] !== '2016')
                 .filter((it) => it['yearOfRelease'] !== '2020');
+
     const gameData: Array<VideoGame> = data.map((it) => {
         const d: VideoGame = {} as VideoGame;
         const strings = ["name","platform","publisher","developer","rating","genre"];
@@ -67,19 +78,33 @@ const main = async () => {
 
     const years = Array.from(new Set(data.map((it) => it.yearOfRelease)));
     const salesData = years.map((year) => {
+        const currYears = d3.timeParse('%Y')(year).getTime();
+        const platforms = Array.from(new Set(gameData
+                    .filter((it) => it.yearOfRelease.getTime() === currYears)
+                    .map(it => it.platform)));
         return {
             year: d3.timeParse('%Y')(year),
             sales: sum(
-                gameData.filter((it) => it.yearOfRelease.getTime() === d3.timeParse('%Y')(year).getTime())
+                gameData.filter((it) => it.yearOfRelease.getTime() === currYears)
                 .map((it) => it.GlobalSales)    
-            )
+            ),
+            platformSales: platforms.map((it) => {
+                const sumSales = sum(
+                    gameData.filter((game) => game.platform === it).map(it => it.GlobalSales)
+                );
+                const o = {};
+                o[it] = sumSales
+                return o;
+            })
         }
     }).sort((a, b) => {
         if (a.year < b.year) return 1
         else return -1;
     });
 
-    let xDomain = d3.extent(salesData, function (d) {
+    let selectedData = salesData.filter((it) => it.year.getFullYear() <= 1995);
+
+    let xDomain = d3.extent(selectedData, function (d) {
         return d.year
     });
     let xScale = d3.scaleTime().domain(xDomain).range([padding, w - padding]);
@@ -89,7 +114,7 @@ const main = async () => {
         .attr("transform", "translate(0," + (h - padding) + ")");
     xAxisGroup.call(xAxis);
 
-    let yMax = d3.max(salesData, function (d) {
+    let yMax = d3.max(selectedData, function (d) {
         return d.sales;
     })
     let yDomain = [0, yMax];
@@ -105,15 +130,19 @@ const main = async () => {
             return xScale(d.year)
         })
         .y((d) => yScale(d.sales));
-
-    viz.selectAll(".global").data([salesData])
+    
+    viz.selectAll(".global").data([selectedData])
         .enter()
         .append("path")
         .attr('class', 'line global')
         .attr("d", lineMaker)
         .attr('stroke', 'black')
         .attr('stroke-width', '5px')
-        .style('fill', 'none');
+        .style('fill', 'none')
+        .style('opacity', 1);
+
+    // const length = d3.selectAll('.global').node().getTotalLength();
+    // console.log(length)
 
     viz.selectAll('.point').data(salesData)
         .enter()
@@ -135,16 +164,8 @@ const main = async () => {
                     .transition()
                     .duration(1000)
                     .attr('y2', yScale(0));
-                viz.append('rect')
-                    .attr('class', 'selectedArea')
-                    .attr('x', xScale(d.year))
-                    .attr('y', yScale(yMax))
-                    .attr('width', 160)
-                    .attr('height', yScale(0))
-                    .style('opacity', .5)
-                    .style('fill', 'black')
-            textArea.innerHTML = '';
-            textArea.innerHTML = `<p>This is ${d.year.getFullYear()} </p> <br > <p> The global sales are ${d.sales.toFixed(2)} millions</p> <br >`
+            // textArea.innerHTML = '';
+            // textArea.innerHTML = `<p>This is ${d.year.getFullYear()} </p> <br > <p> The global sales are ${d.sales.toFixed(2)} millions</p> <br >`
                         
             d3.select(this)
                 .append('text')
@@ -159,7 +180,7 @@ const main = async () => {
              .transition()
              .style('fill', '#c71585')
              .attr('r', 5);
-             textArea.innerHTML = ``;
+            //  textArea.innerHTML = ``;
 
             viz.selectAll('.selectedArea').remove();
 
