@@ -126,6 +126,56 @@
             flex-direction: column;
             justify-content: space-around;
         }
+
+        #shock {
+            color: grey;
+            cursor: help;
+        }
+
+        .shader {
+            position: absolute;
+            z-index: 100;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(144, 144, 144, .69);
+        }
+
+        .shader-content {
+            position: absolute;
+            width: 80%;
+            top: 10%;
+            left: 10%;
+            height: 80%;
+            background-color: seashell;
+            border-radius: 20px;
+        }
+
+        .shader-content h1 {
+            text-align: center;
+            color: black;
+        }
+
+        .shader-content p {
+            color: black;
+            margin: 32px;
+        }
+
+        .close-button {
+            width: 5%;
+            height: 5%;
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .hide {
+            display: none;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
 
@@ -144,7 +194,15 @@
         </div>
     </div>
     <div id="display">
-
+        <div class="shader hide">
+            <div class="shader-content" id="shader-shock">
+                <img id="atari-close" class="close-button" src="./close.svg" alt="" srcset="">
+                <h1>Atari Shock</h1>
+                <p>Atari shock was a large-scale recession in the video game industry, primarily in the United States. </p>
+                <p>The crash was attributed to several factors, including market saturation in the number of game consoles and available games, and waning interest in console games in favor of personal computers.</p>
+                <p>After this shock, the console game manufacturers adopt a more strict game quality check.</p>
+            </div>
+        </div>
         <div id="container">
 
         </div>
@@ -152,7 +210,7 @@
         <div id="text">
             <div id="phase-1">
                 <p>From 1980 to 1995, the console game industry growth rate is going up and down.</p>
-                <p>That is because the Atari Shock, a video game crash happening at 80s.</p>
+                <p>That is because the <a id="shock">Atari Shock</a>, a video game crash happening at 80s.</p>
                 <p>After the shock, Nintendo Entertainment System saved the world.</p>
                 <br/>
                 <p>Hover on the point to see how many sales per platform contributed at this yeat!</p>

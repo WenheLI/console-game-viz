@@ -35,6 +35,16 @@ const main = async () => {
     const h = window.innerHeight;
     const padding = 90;
 
+    const atarri = document.getElementById('shock');
+    atarri.addEventListener('click', (e) => {
+        document.getElementsByClassName('shader')[0].className = 'shader show';
+    });
+
+    document.getElementById('atari-close').addEventListener('click', () => {
+        document.getElementsByClassName('shader')[0].className = 'shader hide';
+
+    })
+
     const nextButton = document.getElementById('next-button-img');
     const displayDiv = document.getElementById('display');
     nextButton.addEventListener('click', (e) => {
