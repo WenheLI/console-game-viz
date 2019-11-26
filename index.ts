@@ -1,41 +1,113 @@
-import * as d3 from "d3";
+import * as d3 from 'd3';
+const w = window.innerWidth * .7;
+const h = window.innerHeight;
+const padding = 90;
 
 interface VideoGame {
     name: string,
-    platform: string,
-    publisher: string,
-    developer: string,
-    rating: string,
-    genre: string,
-    yearOfRelease: Date,
-    EUSales: number,
-    JPSales: number,
-    NASales: number,
-    OtherSales: number,
-    GlobalSales: number,
-    criticScore: number,
-    userScore: number,
-    userCount: number,
-    criticCount: number
+        platform: string,
+        publisher: string,
+        developer: string,
+        rating: string,
+        genre: string,
+        yearOfRelease: Date,
+        EUSales: number,
+        JPSales: number,
+        NASales: number,
+        OtherSales: number,
+        GlobalSales: number,
+        criticScore: number,
+        userScore: number,
+        userCount: number,
+        criticCount: number
 }
 
 interface SalesData {
     year: Date,
-    sales: number
+    sales: number,
+    platformSales: {}
 }
 
-const sum = (arr: Array<number>): number => {
+const yearRange = [1995, 2010, 2016];
+let cursor = 0;
+let xScale;
+let xAxis;
+let yScale;
+let yAxis;
+let lineMaker: d3.Line<Array<Array<SalesData>>>;
+let salesData: Array<SalesData> = [];
+let selectData: Array<SalesData> = [];
+
+const sum = (arr: Array < number > ): number => {
     return arr.reduce((prev, curr) => {
         return prev + curr;
     }, 0);
 }
 
-const main = async () => {
-    const w = window.innerWidth * .7;
-    const h = window.innerHeight;
-    const padding = 90;
+const type = (content: string, speed: number) => {
 
+}
+
+const promizer = (func) => {
+    return new Promise((resolve) => {
+        func().on('end', resolve);
+    });
+}
+
+const hookButtons = (viz: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>) => {
     const atarri = document.getElementById('shock');
+    const nextButton = document.getElementById('next-button-img');
+    const displayDiv = document.getElementById('display');
+    const statsButton = document.getElementById('stats-button-img');
+    const statsBackButton = document.getElementById('back-to-phases');
+
+    const moerButton = document.getElementById('more');
+
+    moerButton.addEventListener('click', () => {
+        const temp = [...selectData];
+        selectData = salesData.filter((it) => it.year.getFullYear() < yearRange[1]);
+        xScale.domain(d3.extent(selectData, (d) => d.year));
+        yScale.domain([0, d3.max(selectData, (d) => d.sales)]);
+
+        const xAnimate = promizer(() => {
+                return viz.transition()
+                        .select('.xaxisgroup')
+                        .duration(2000)
+                        .call(xAxis);
+        });
+
+        const yAnimate = promizer(() => {
+            return viz.transition()
+                    .select('.yaxisgroup')
+                    .duration(2000)
+                    .call(yAxis)
+        });
+
+        Promise.all([xAnimate, yAnimate]).then(() => {
+            viz.transition()
+            .selectAll('.global')
+            .duration(2000)
+            .attr('d', lineMaker(temp))
+        })
+
+
+
+    });
+
+    statsBackButton.addEventListener('click', (e) => {
+        scrollTo({
+            top: window.innerHeight,
+            behavior: 'smooth'
+        })
+    });
+
+    statsButton.addEventListener('click', () => {
+        scrollTo({
+            top: window.innerHeight * 2,
+            behavior: 'smooth'
+        })
+    })
+
     atarri.addEventListener('click', (e) => {
         document.getElementsByClassName('shader')[0].className = 'shader show';
     });
@@ -45,8 +117,7 @@ const main = async () => {
 
     })
 
-    const nextButton = document.getElementById('next-button-img');
-    const displayDiv = document.getElementById('display');
+
     nextButton.addEventListener('click', (e) => {
         scrollTo({
             top: window.innerHeight,
@@ -54,160 +125,213 @@ const main = async () => {
         })
     });
 
-    const statsButton = document.getElementById('stats-button-img');
-    statsButton.addEventListener('click', () => {
-        scrollTo({
-            top: window.innerHeight * 2,
-            behavior: 'smooth'
-        })
-    })
+}
 
-    const textArea = document.getElementById('text');
-
-    const viz = d3.select('#container').append('svg')
-                    .style('width', w)
-                    .style('height', h)
-                    .style('background', 'aliceblue')
-
-    let data = await d3.csv('./videogames.csv');
-
-    data = data.filter((it) => it['yearOfRelease'] !== 'N/A')
-                .filter((it) => it['yearOfRelease'] !== '2017')
-                .filter((it) => it['yearOfRelease'] !== '2016')
-                .filter((it) => it['yearOfRelease'] !== '2020');
-
-    const gameData: Array<VideoGame> = data.map((it) => {
-        const d: VideoGame = {} as VideoGame;
-        const strings = ["name","platform","publisher","developer","rating","genre"];
-        strings.forEach((name) => {
-            d[name] = it[name];
+const processData = async () => {
+    const rawData = await d3.csv('./videogames.csv');
+    const data: Array < VideoGame > =
+        rawData.filter((it) => it['yearOfRelease'] !== 'N/A').map((it) => {
+            const d: VideoGame = {} as VideoGame;
+            const strings = ["name", "platform", "publisher", "developer", "rating", "genre"];
+            strings.forEach((name) => {
+                d[name] = it[name];
+            });
+            const floats = [
+                "EUSales", "JPSales", "NASales", "OtherSales", "GlobalSales", "criticScore", "userScore", "userCount", "criticCount"
+            ]
+            d.yearOfRelease = d3.timeParse('%Y')(it.yearOfRelease);
+            floats.forEach((float) => {
+                const temp = parseFloat(it[float]);
+                if (!isNaN(temp)) d[float] = temp;
+                else d[float] = -1;
+            })
+            return d;
         });
-        const floats = [
-            "EUSales" , "JPSales" , "NASales" , "OtherSales" , "GlobalSales" , "criticScore" , "userScore" , "userCount" , "criticCount"
-        ]
-        d.yearOfRelease = d3.timeParse('%Y')(it.yearOfRelease);
-        floats.forEach((float) => {
-            const temp = parseFloat(it[float]);
-            if (!isNaN(temp)) d[float] = temp;
-            else d[float] = -1;
-        })
-        return d;
-    });
+    
+    return {
+        rawData,
+        data
+    };
+}
 
-    const years = Array.from(new Set(data.map((it) => it.yearOfRelease)));
-    const salesData = years.map((year) => {
-        const currYears = d3.timeParse('%Y')(year).getTime();
-        const platforms = Array.from(new Set(gameData
-                    .filter((it) => it.yearOfRelease.getTime() === currYears)
-                    .map(it => it.platform)));
+const getYearSales = (years: Array < string > , data: Array < VideoGame > ) => {
+    return years.map((year) => {
+        const currYears = d3.timeParse('%Y')(year).getFullYear();
+        const platforms = Array.from(new Set(data.filter((it) =>
+                it.yearOfRelease.getFullYear() === currYears)
+            .map(it => it.platform)));
+        const platformSales = {};
+        platforms.forEach((it) => {
+            const sumSales = sum(
+                data.filter((game) => game.yearOfRelease.getFullYear() === currYears)
+                    .filter((game) => game.platform === it).map(it => it.GlobalSales)
+            );
+           platformSales[it] = sumSales;
+        })
         return {
             year: d3.timeParse('%Y')(year),
             sales: sum(
-                gameData.filter((it) => it.yearOfRelease.getTime() === currYears)
-                .map((it) => it.GlobalSales)    
+                data.filter((it) => it.yearOfRelease.getFullYear() === currYears)
+                .map((it) => it.GlobalSales)
             ),
-            platformSales: platforms.map((it) => {
-                const sumSales = sum(
-                    gameData.filter((game) => game.platform === it).map(it => it.GlobalSales)
-                );
-                const o = {};
-                o[it] = sumSales
-                return o;
-            })
-        }
+            platformSales
+        } as SalesData
     }).sort((a, b) => {
-        if (a.year < b.year) return 1
-        else return -1;
+        if (a.year < b.year) return -1
+        else return 1;
     });
+}
 
-    let selectedData = salesData.filter((it) => it.year.getFullYear() <= 1995);
+const getValueFromObject = (obj: object) => {
+    return Object.keys(obj).map((it) => obj[it]);
+}
 
-    let xDomain = d3.extent(selectedData, function (d) {
-        return d.year
+const typeWords = (target: HTMLElement, words: string, speed: number) => {
+    const length = words.length;
+    let i = 0;
+    return new Promise((resolve, reject) => {
+        const id = setInterval(() => {
+            target.innerText += words.charAt(i);
+            i += 1;
+            if (i === length - 1) {
+                clearInterval(id);
+                return resolve;
+            }
+        }, speed);
     });
-    let xScale = d3.scaleTime().domain(xDomain).range([padding, w - padding]);
-    let xAxis = d3.axisBottom(xScale);
-    let xAxisGroup = viz.append("g")
-        .attr("class", "xaxisgroup")
-        .attr("transform", "translate(0," + (h - padding) + ")");
+  
+}
+
+const animateLine = (time: number, target: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) => {
+    const length = target.node().getTotalLength();
+    return new Promise((resolve, reject) => {
+        target.attr("stroke-dasharray", length + " " + length)
+        .attr("stroke-dashoffset", length)
+        .transition()
+        .ease(d3.easeQuad)
+        .duration(8000) 
+        .attr("stroke-dashoffset", 0)
+        .on('end', () => resolve());
+    });
+}
+
+const showText = (target: HTMLElement, time: number) => {
+    return new Promise((resolve) => {
+        target.animate([
+            {
+                opacity: 0
+            },
+            {
+                opacity: 1
+            }
+        ], {
+            duration: 1000,
+            fill: 'both'
+        }).addEventListener('finish', () => {
+            resolve();
+        })
+    });
+}
+
+const getAllplatforms = (data: Array<SalesData>) => {
+    return Array.from(new Set(data.map(it => Object.keys(it.platformSales)).flat(2))) as Array<string>;
+}
+
+const makeYear2salesPlatform = (platforms: Array<string>, data: Array<SalesData>, years: Array<string>) => {
+    return platforms.map((platform) => {
+        return years.map((year) => {
+            const currentYearSales = data.filter((it) => it.year.getFullYear() === d3.timeParse('%Y')(year).getFullYear())[0].platformSales[platform];
+            // console.log(currentYearSales, platform, currentYearSales[platform])
+            // console.log(currentYearSales, platform)
+            return {
+                year: d3.timeParse('%Y')(year),
+                sales: currentYearSales ? currentYearSales : 0,
+                platform
+            }
+        })
+    })
+}
+
+const main = async () => {
+
+    const viz = d3.select('#container').append('svg')
+        .style('width', w)
+        .style('height', h)
+        .style('background', 'aliceblue');
+
+    hookButtons(viz);
+
+
+    const {
+        rawData,
+        data
+    } = await processData();
+    const years = Array.from(new Set(rawData.map((it) => it.yearOfRelease)))
+        .filter((it) => it !== 'N/A')
+        .filter((it) => it !== '2017')
+        .filter((it) => it !== '2016')
+        .filter((it) => it !== '2020').sort((a, b) => {
+            if (a < b) return -1
+            else return 1;
+        });
+
+    salesData = getYearSales(years, data);
+    
+    let selectYears = years.filter((it) => parseInt(it) <= 1995)
+    selectData = salesData.filter((it) => it.year.getFullYear() <= 1995)
+    let yMax = d3.max(selectData, (d) => d.sales);
+
+    let xDomain = d3.extent(selectData, (d) => d.year);
+    let yDomain = [0, yMax];
+
+    xScale = d3.scaleTime().domain(xDomain).range([padding, w - padding]);
+    xAxis = d3.axisBottom(xScale);
+    const  xAxisGroup = viz.append("g")
+                        .attr("class", "xaxisgroup")
+                        .attr("transform", "translate(0," + (h - padding) + ")");
     xAxisGroup.call(xAxis);
 
-    let yMax = d3.max(selectedData, function (d) {
-        return d.sales;
-    })
-    let yDomain = [0, yMax];
-    let yScale = d3.scaleLinear().domain(yDomain).range([h - padding, padding]);
-    let yAxis = d3.axisLeft(yScale);
-    let yAxisGroup = viz.append("g")
-        .attr("class", "yaxisgroup")
-        .attr("transform", "translate(" + (padding / 2) + ",0)");
+    yScale = d3.scaleLinear().domain(yDomain).range([h - padding, padding]);
+    yAxis = d3.axisLeft(yScale);
+    const  yAxisGroup = viz.append("g")
+                        .attr("class", "yaxisgroup")
+                        .attr("transform", "translate(" + (padding / 2) + ",0)");
     yAxisGroup.call(yAxis);
-
-    const lineMaker = d3.line()
-        .x((d) => {
-            return xScale(d.year)
-        })
-        .y((d) => yScale(d.sales));
+    lineMaker = d3.line()
+                        .x((d) => xScale(d.year))
+                        .y((d) => yScale(d.sales));
     
-    viz.selectAll(".global").data([selectedData])
-        .enter()
-        .append("path")
-        .attr('class', 'line global')
-        .attr("d", lineMaker)
-        .attr('stroke', 'black')
-        .attr('stroke-width', '5px')
-        .style('fill', 'none')
-        .style('opacity', 1);
+    viz.selectAll(".global").data([selectData])
+                        .enter()
+                        .append("path")
+                        .attr('class', 'line global')
+                        .attr("d", lineMaker)
+                        .attr('stroke', 'black')
+                        .attr('stroke-width', '5px')
+                        .style('fill', 'none')
+                        .style('opacity', 1);
 
-    // const length = d3.selectAll('.global').node().getTotalLength();
-    // console.log(length)
+    const globalLine = d3.select('.global');
+    const phase1s = document.querySelectorAll('#phase-1 .transparent');
+    let allPlatforms = getAllplatforms(selectData);
+    const t = makeYear2salesPlatform(allPlatforms, selectData, selectYears);
+    // await animateLine(5000, globalLine);
+    // const colorScale = d3.scaleOrdinal().domain(allPlatforms)
+    //                         .range(allPlatforms.map((val, i) => 
+    //                                 d3.interpolateRainbow(i / (allPlatforms.length - 1))
+    //                         ))
+    // viz.selectAll(".platform").data(t).enter()
+    //             .append("path")
+    //             .attr('class', 'line global')
+    //             .attr("d", lineMaker)
+    //             .attr('stroke', (d) => colorScale(d[0].platform))
+    //             .attr('stroke-width', '5px')
+    //             .style('fill', 'none')
+    //             .on('mouseenter', (d) => {
+    //                 console.log(d[0].platform)
+    //             })
+    //             .style('opacity', 1);
 
-    viz.selectAll('.point').data(salesData)
-        .enter()
-        .append('circle')
-        .attr('class','point')
-        .attr('cx', (d) => xScale(d.year))
-        .attr('cy', (d) => yScale(d.sales))
-        .attr('r', (d) => 5)
-        .style('fill', '#c71585')
-        .on('mouseenter', function (d) {
-                viz.append('line')
-                    .attr('class', 'animatedLine')
-                    .style("stroke", "#c71585")
-                    .style("stroke-weight", 30)
-                    .attr('x1', xScale(d.year))
-                    .attr('y1', yScale(d.sales))
-                    .attr('x2', xScale(d.year))
-                    .attr('y2', yScale(d.sales))
-                    .transition()
-                    .duration(1000)
-                    .attr('y2', yScale(0));
-            // textArea.innerHTML = '';
-            // textArea.innerHTML = `<p>This is ${d.year.getFullYear()} </p> <br > <p> The global sales are ${d.sales.toFixed(2)} millions</p> <br >`
-                        
-            d3.select(this)
-                .append('text')
-                
-            d3.select(this)
-             .transition()
-             .style('fill', 'orange')
-             .attr('r', 10);
-        })
-        .on('mouseleave', function (d) {
-            d3.select(this)
-             .transition()
-             .style('fill', '#c71585')
-             .attr('r', 5);
-            //  textArea.innerHTML = ``;
-
-            viz.selectAll('.selectedArea').remove();
-
-            viz.selectAll('.animatedLine')
-                    .transition()
-                    .duration(1000)
-                    .attr('y2', yScale(d.sales))
-                    .remove()
-            
-        });
 }
+
 main();
