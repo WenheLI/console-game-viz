@@ -1,266 +1,93 @@
 <html>
 
 <head>
-    <title>Console Games</title>
+    <title>ConsoleGame</title>
     <style>
-        .placeholder {
-            width: 80%;
-            height: 60%;
-            background-color: gray;
-        }
-
-        @font-face {
-            font-family: 'game';
-            src: url('./data/game_over.ttf');
-        }
-
-        @keyframes show {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
         #display {
+            height: 100%;
+            width: 70%;
+        }
+
+        #column {
+            width: 30%;
+            height: 100%;
+            overflow-y: auto;
+            justify-content: space-around;
+        }
+
+        .page {
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-
-        #intro {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
+            justify-content: space-between;
         }
 
-        #intro div {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            text-align: center;
-        }
-
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            color: white;
-        }
-
-        p {
-            font-family: 'Press Start 2P', cursive;
-            color: white;
-        }
-
-        #next-button {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            cursor: pointer;
-        }
-
-        #next-button img {
-            /* animation: blink 5s 5s infinite; */
-            width: 80px;
-            height: 80px;
+        .page * {
+            padding-left: 12px;
         }
 
         #container {
-            width: 70%;
-            height: 100%;
-        }
-
-        #text {
-            height: 100%;
-            width: 30%;
-
-            padding: 10px;
-
-            overflow-y: auto;
-        }
-
-        #text div {
+            display: flex;
+            flex-direction: row;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
+            overflow: hidden;
         }
 
-        #text div p {
-            color: black;
+        #first {
+
         }
 
-        #stats-button-img {
-            width: 80px;
-            height: 80px;
-            cursor: pointer;
-        }
-
-        #stats {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            background-color: black;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        #stats .placeholder {
+        img {
+            width: 90%;
             margin: auto;
         }
-
-
-        #phase-4 {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-
-        #shock {
-            color: grey;
-            cursor: help;
-        }
-
-        .shader {
-            position: absolute;
-            z-index: 100;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(144, 144, 144, .69);
-        }
-
-        .shader-content {
-            position: absolute;
-            width: 80%;
-            top: 10%;
-            left: 10%;
-            height: 80%;
-            background-color: seashell;
-            border-radius: 20px;
-        }
-
-        .shader-content h1 {
-            text-align: center;
-            color: black;
-        }
-
-        .shader-content p {
-            color: black;
-            margin: 32px;
-        }
-
-        .close-button {
-            width: 5%;
-            height: 5%;
-            position: absolute;
-            right: 12px;
-            top: 12px;
-            cursor: pointer;
-        }
-
-        .show {
-            display: block;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        .back {
-            height: 5%;
-            margin-top: 12px;
-            transform: scale(-1);
-            cursor: pointer;
-        }
-
-        .transparent {
-            opacity: 0;
-        }
     </style>
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
-    <div id="intro">
-        <div>
-            <h1>What is happening in the Console Game Industry?</h1>
+    <div id="container">
+        <div id="display">
+
         </div>
-        <div>
-            <p>Data ranges from 1980 - 2015</p>
-        </div>
-        <div id="next-button">
-            <img id="next-button-img" src="./data/arrow.svg" alt="" srcset="">
-        </div>
-    </div>
-    <div id="display">
-        <div class="shader hide">
-            <div class="shader-content" id="shader-shock">
-                <img id="atari-close" class="close-button" src="./close.svg" alt="" srcset="">
-                <h1>Atari Shock</h1>
-                <p>Atari shock was a large-scale recession in the video game industry, primarily in the United States. </p>
-                <p>The crash was attributed to several factors, including market saturation in the number of game consoles and available games, and waning interest in console games in favor of personal computers.</p>
-                <p>After this shock, the console game manufacturers adopt a more strict game quality check.</p>
+        <div id="column">
+            <div id="first" class="page">
+                <h3>How does console game change in the past 30 years?</h3>
+                <p>From 1980 to 1995, the global console game sales went up and down.</p>
             </div>
-        </div>
-        <div id="container">
-
-        </div>
-
-        <div id="text">
-            <div id="phase-1">
-                <p>From 1980 to 1995, the console game industry growth rate is going up and down.</p>
-                <p class="transparent">That is because the <a id="shock">Atari Shock</a>, a video game crash happening at 80s.</p>
-                <p class="transparent">After the shock, Nintendo Entertainment System saved the world.</p>
-                <br/>
-                <button id="more"></button>
-
-                <div style="height: 50%;" class="placeholder indiv">
-
+            <div class="page">
+                <p></p>
+                <img src="./data/atari.svg" alt="" srcset="">
+                <div>
+                    <p>The first major recession is because the Atari Shock, a video game crash happening at 1982 - 1984.</p>
+                    <p>At that time, Atari was the hegemon of the game industry. However, Atari tended to make more low quality games, which eventually destoried Atari itself.</p>
                 </div>
             </div>
-            <div id="phase-2">
-                <p>Then, the growth is faster.</p>
-                <p>It is a golden age for console games. Play Station family, Wll, and xBox took up the market.</p>
-                <p>Hover on the point to see how many sales per platform contributed at this yeat!</p>
-                <div style="height: 50%;" class="placeholder indiv">
-
+            <div class="page">
+                <p></p>
+                <div>
+                    <img src="./data/nes.svg" alt="" srcset="">
+                    <img src="./data/snes.svg" alt="" srcset="">
+                </div>
+                
+                <div>
+                    <p>After this shock, Nintendo took the chance and made a commerical success with two consoles, NES and SNES.</p>    
                 </div>
             </div>
-            <div id="phase-3">
-                <p>In the recent 5 years, the sales went down, since mobile games are trying to take the market.</p>
-                <p>Hover on the point to see how many sales per platform contributed at this yeat!</p>
-                <div style="height: 50%;" class="placeholder indiv">
-
+            <div class="page">
+                    <p>4</p>
                 </div>
-            </div>
-            <div id="phase-4">
-                <p>Let's also have a look at how the game genres vary along time by clicking the button! </p>
-                <img id="stats-button-img" src="./data/arrow-black.svg" alt="" srcset="">
 
-            </div>
+                <div class="page">
+                        <p>5</p>
+                    </div>
         </div>
     </div>
 
-    <div id="stats">
-        <img id="back-to-phases" src="./data/arrow.svg" class="back" > </img>
-        <div class="placeholder">
-            <p>This area will have three pie-charts for JP, EU and NA's game genres and a timeline</p>
-        </div>
-    </div>
-    <script src="./index.ts"></script>
+
+
+    <script src="./exp.ts"></script>
 </body>
 
 </html>

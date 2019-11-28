@@ -61,7 +61,9 @@ const hookButtons = (viz: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     const statsButton = document.getElementById('stats-button-img');
     const statsBackButton = document.getElementById('back-to-phases');
 
-    const moerButton = document.getElementById('more');
+    const moerButton = document.getElementById('to-2');
+
+    const textArea = document.getElementById('text');
 
     moerButton.addEventListener('click', () => {
         const temp = [...selectData];
@@ -82,13 +84,16 @@ const hookButtons = (viz: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
                     .duration(2000)
                     .call(yAxis)
         });
-
+        textArea.scrollTo({
+            top: window.innerHeight,
+            behavior: "smooth"
+        })
         Promise.all([xAnimate, yAnimate]).then(() => {
             viz.transition()
-            .selectAll('.global')
+            .selectAll('.line')
             .duration(2000)
             .attr('d', lineMaker(temp))
-        })
+        });
 
 
 
@@ -112,18 +117,18 @@ const hookButtons = (viz: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
         document.getElementsByClassName('shader')[0].className = 'shader show';
     });
 
-    document.getElementById('atari-close').addEventListener('click', () => {
-        document.getElementsByClassName('shader')[0].className = 'shader hide';
+    // document.getElementById('atari-close').addEventListener('click', () => {
+    //     document.getElementsByClassName('shader')[0].className = 'shader hide';
 
-    })
+    // })
 
 
-    nextButton.addEventListener('click', (e) => {
-        scrollTo({
-            top: window.innerHeight,
-            behavior: 'smooth'
-        })
-    });
+    // nextButton.addEventListener('click', (e) => {
+    //     scrollTo({
+    //         top: window.innerHeight,
+    //         behavior: 'smooth'
+    //     })
+    // });
 
 }
 
@@ -202,16 +207,21 @@ const typeWords = (target: HTMLElement, words: string, speed: number) => {
   
 }
 
-const animateLine = (time: number, target: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) => {
-    const length = target.node().getTotalLength();
+const animateLine = (time: number, target: d3.Selection<d3.BaseType, unknown, HTMLElement, any> | d3.BaseType, ease=d3.easeQuad) => {
+    let _target = target;
+    if (!target.node) {
+        _target = d3.select(target)
+    } 
+    let length = _target.node().getTotalLength();
+    
     return new Promise((resolve, reject) => {
-        target.attr("stroke-dasharray", length + " " + length)
-        .attr("stroke-dashoffset", length)
-        .transition()
-        .ease(d3.easeQuad)
-        .duration(8000) 
-        .attr("stroke-dashoffset", 0)
-        .on('end', () => resolve());
+        _target.attr("stroke-dasharray", length + " " + length)
+            .attr("stroke-dashoffset", length)
+            .transition()
+            .ease(ease)
+            .duration(8000) 
+            .attr("stroke-dashoffset", 0)
+            .on('end', () => resolve());
     });
 }
 
@@ -249,7 +259,7 @@ const makeYear2salesPlatform = (platforms: Array<string>, data: Array<SalesData>
                 platform
             }
         })
-    })
+    });
 }
 
 const main = async () => {
@@ -288,6 +298,7 @@ const main = async () => {
     xAxis = d3.axisBottom(xScale);
     const  xAxisGroup = viz.append("g")
                         .attr("class", "xaxisgroup")
+                        .style('font-family', `'Press Start 2P', cursive`)
                         .attr("transform", "translate(0," + (h - padding) + ")");
     xAxisGroup.call(xAxis);
 
@@ -295,42 +306,93 @@ const main = async () => {
     yAxis = d3.axisLeft(yScale);
     const  yAxisGroup = viz.append("g")
                         .attr("class", "yaxisgroup")
+                        .style('font-family', `'Press Start 2P', cursive`)
                         .attr("transform", "translate(" + (padding / 2) + ",0)");
     yAxisGroup.call(yAxis);
     lineMaker = d3.line()
                         .x((d) => xScale(d.year))
                         .y((d) => yScale(d.sales));
     
-    viz.selectAll(".global").data([selectData])
+    const globalLine = viz.selectAll(".global").data([selectData])
                         .enter()
                         .append("path")
                         .attr('class', 'line global')
                         .attr("d", lineMaker)
                         .attr('stroke', 'black')
-                        .attr('stroke-width', '5px')
+                        .attr('stroke-width', '2px')
                         .style('fill', 'none')
                         .style('opacity', 1);
 
-    const globalLine = d3.select('.global');
+    // const globalLine = d3.select('.global');
+
     const phase1s = document.querySelectorAll('#phase-1 .transparent');
+
     let allPlatforms = getAllplatforms(selectData);
     const t = makeYear2salesPlatform(allPlatforms, selectData, selectYears);
-    // await animateLine(5000, globalLine);
-    // const colorScale = d3.scaleOrdinal().domain(allPlatforms)
-    //                         .range(allPlatforms.map((val, i) => 
-    //                                 d3.interpolateRainbow(i / (allPlatforms.length - 1))
-    //                         ))
-    // viz.selectAll(".platform").data(t).enter()
-    //             .append("path")
-    //             .attr('class', 'line global')
-    //             .attr("d", lineMaker)
-    //             .attr('stroke', (d) => colorScale(d[0].platform))
-    //             .attr('stroke-width', '5px')
-    //             .style('fill', 'none')
-    //             .on('mouseenter', (d) => {
-    //                 console.log(d[0].platform)
-    //             })
-    //             .style('opacity', 1);
+    //await
+    await animateLine(5000, globalLine);
+    const colorScale = d3.scaleOrdinal().domain(allPlatforms)
+                            .range(allPlatforms.map((val, i) => 
+                                    d3.interpolateRainbow(i / (allPlatforms.length ))
+                            ));
+
+    viz.selectAll(".atari").data(t.filter((it) => it[0].platform === '2600')).enter()
+                .append("path")
+                .attr('class', 'line atari')
+                .attr("d", lineMaker)
+                .attr('stroke', (d) => colorScale(d[0].platform))
+                .attr('stroke-width', '3px')
+                .style('fill', 'none')
+                .style('opacity', 1);
+
+    const atari = d3.select('.atari');
+    
+    await Promise.all([showText(phase1s[0], 500), animateLine(300, atari)]);
+    
+    viz.selectAll(".nes").data(t.filter((it) => it[0].platform === "NES" )).enter()
+        .append("path")
+        .attr('class', 'line nes')
+        .attr("d", lineMaker)
+        .attr('stroke', (d) => colorScale(d[0].platform))
+        .attr('stroke-width', '3px')
+        .style('fill', 'none')
+        .style('opacity', 1);
+    viz.selectAll(".snes").data(t.filter((it) => it[0].platform === "SNES" )).enter()
+        .append("path")
+        .attr('class', 'line snes')
+        .attr("d", lineMaker)
+        .attr('stroke', (d) => colorScale(d[0].platform))
+        .attr('stroke-width', '3px')
+        .style('fill', 'none')
+        .style('opacity', 1);    
+
+    let anis = [
+        showText(phase1s[1], 500),
+        animateLine(3000, d3.select('.snes'), d3.easeQuadOut),
+        animateLine(3000, d3.select('.nes'), d3.easeQuadOut),
+    ]
+
+    await Promise.all(anis);
+
+    showText(phase1s[2], 500);
+    viz.selectAll(".others").data(t.filter((it) => 
+                it[0].platform !== "NES" &&
+                it[0].platform !== "SNES" &&
+                it[0].platform !== "2600"
+            )).enter()
+        .append("path")
+        .attr('class', 'others line')
+        .attr("d", lineMaker)
+        .attr('stroke', (d) => colorScale(d[0].platform))
+        .attr('stroke-width', '3px')
+        .style('fill', 'none')
+        .style('opacity', 1);
+    const others = d3.selectAll('.others');
+    await Promise.all(others.nodes().map((it) => {
+        animateLine(3000, it);
+    }));
+    
+    showText(phase1s[3], 300);
 
 }
 
