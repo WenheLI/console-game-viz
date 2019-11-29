@@ -286,7 +286,7 @@ const main = async () => {
         });
 
     salesData = getYearSales(years, data);
-    
+    console.log(salesData)
     let selectYears = years.filter((it) => parseInt(it) <= 1995)
     selectData = salesData.filter((it) => it.year.getFullYear() <= 1995)
     let yMax = d3.max(selectData, (d) => d.sales);

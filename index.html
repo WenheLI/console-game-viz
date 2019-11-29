@@ -3,12 +3,50 @@
 <head>
     <title>ConsoleGame</title>
     <style>
+        @keyframes jump {
+            0% {
+                transform: translateY(0);
+            }
+
+            20% {
+                transform: translateY(7px);
+            }
+
+            40% {
+                transform: translateY(0);
+            }
+
+            60% {
+                transform: translateY(3px);
+            }
+
+            80% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(7px);
+            }
+        }
+
+        @keyframes leftRight {
+            0% {
+                transform: translateX(-7px);
+            }
+            50% {
+                transform: translateX(7px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
         #display {
             height: 100%;
             width: 70%;
         }
 
-        #column {
+        .column {
             width: 30%;
             height: 100%;
             overflow-y: auto;
@@ -16,14 +54,14 @@
         }
 
         .page {
-            width: 100%;
+            width: 95%;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .page * {
+        .page {
             padding-left: 12px;
         }
 
@@ -35,13 +73,64 @@
             overflow: hidden;
         }
 
-        #first {
+        #first {}
 
+        #first h1 {
+            letter-spacing: -.02em;
+            font-weight: 400;
+        }
+
+        #column p {
+            font-weight: 300;
         }
 
         img {
             width: 90%;
             margin: auto;
+            margin-top: 12px;
+        }
+
+        .row-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #scroller {
+            animation: jump 2s ease-in-out infinite alternate;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-weight: 400;
+            letter-spacing: -.02em;
+            border-bottom: 3px solid;
+            display: inline;
+            margin-bottom: 12px;
+        }
+
+        .page div {
+            max-height: 50%;
+        }
+
+        #tri-container {
+            display: flex;
+            flex-direction: row;
+            align-self: center;
+            margin-left: 24px;
+            height: 100%;
+            animation: leftRight 1s ease-in-out infinite alternate;
+        }
+
+        #tri-container p {
+            align-self: center;
+        }
+
+        #tri-container h2 {
+            cursor: pointer;
+        }
+
+        #triangle {
         }
     </style>
 </head>
@@ -51,37 +140,91 @@
         <div id="display">
 
         </div>
-        <div id="column">
+        <div id="column" class="column">
             <div id="first" class="page">
-                <h3>How does console game change in the past 30 years?</h3>
-                <p>From 1980 to 1995, the global console game sales went up and down.</p>
-            </div>
-            <div class="page">
-                <p></p>
-                <img src="./data/atari.svg" alt="" srcset="">
+                <div class="row-container">
+                    <h1>A visualization of Console Game Industry</h1>
+                    <p>This visualization is about console game industry from 1980 to 1997.
+                    </p>
+                    <div id="scroller">
+                        <p style="text-align: center;"><strong><i>Keep scrolling</i></strong></p>
+                        <svg style="align-self: center;" width="40" height="10">
+                            <path d="M0,0L40,0L20,10Z" fill="#000" stroke="none"></path>
+                        </svg>
+                    </div>
+                </div>
                 <div>
-                    <p>The first major recession is because the Atari Shock, a video game crash happening at 1982 - 1984.</p>
-                    <p>At that time, Atari was the hegemon of the game industry. However, Atari tended to make more low quality games, which eventually destoried Atari itself.</p>
+                    <h2>The darkage of Console Game.</h2>
+                    <p>From 1980 to 1995, the global console game sales went up and down. The future of the console game
+                        at that time was not clear.</p>
+                    <br />
+                    <br />
                 </div>
             </div>
             <div class="page">
                 <p></p>
                 <div>
-                    <img src="./data/nes.svg" alt="" srcset="">
-                    <img src="./data/snes.svg" alt="" srcset="">
-                </div>
-                
-                <div>
-                    <p>After this shock, Nintendo took the chance and made a commerical success with two consoles, NES and SNES.</p>    
-                </div>
-            </div>
-            <div class="page">
-                    <p>4</p>
+                    <h2>Atari is dead!</h2>
+                    <img src="./data/atari.svg" alt="" srcset="">
+                    <div>
+                        <p>Atari was the only game-console at early 80s. However, Atari did not control their game
+                            quality and allowed game developers to copy a game and rebrand it.</p>
+                        <p>This finally resulted in Atari Shock, a video game crash happening at 1982 - 1984.</p>
+                        <p>At the end, Atari bankrupted ...</p>
+                    </div>
                 </div>
 
-                <div class="page">
-                        <p>5</p>
+            </div>
+            <div class="page">
+                <p></p>
+                <div>
+                    <h2>Long live Nintendo!</h2>
+                    <div>
+                        <img src="./data/nes.svg" alt="" srcset="">
                     </div>
+
+                    <div>
+                        <p>After this shock, Nintendo took the chance and made a commerical success with three consoles,
+                            GB, NES and SNES.</p>
+                        <p>To aviod the Atari Shock, Nintendo was applying a higher tax for games published on NES and
+                            SNES. In this way, game developers would put more time on how to imporve game quality.</p>
+                        <p>However, the monoploy position and restrict rule left resistance among game developers ...
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="page">
+                <p></p>
+
+                <div>
+                    <h2>Nintendo is evil!</h2>
+                    <p>With the high-pressure policy Nintendo were using, more and more game companies started to
+                        challenge Nintendo's position.</p>
+                    <p>At that time, tens of game-consoles were in the market. While, none of them were able to take
+                        Nintendo down!</p>
+                    <p>However, this open competition did stimulate the whole market ...</p>
+                </div>
+            </div>
+
+            <div class="page">
+                <p></p>
+
+                <div>
+                    <h2>New Age</h2>
+                    <p>To take down Nintendo's monopoly position, many manufacturers started making their own consoles.</p>
+                    <p>Sony and his PS 1 won the game ...</p>
+                </div>
+            </div>
+            <div class="page">
+                    <p></p>
+    
+                    <div>
+                        <h2>New Age</h2>
+                        <p>To take down Nintendo's monopoly position, many manufacturers started making their own consoles.</p>
+                        <p>Sony and his PS 1 won the game ...</p>
+                    </div>
+                </div>
         </div>
     </div>
 
