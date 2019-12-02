@@ -9,7 +9,6 @@ import {
     getAllplatforms,
     makeYear2salesPlatform
 } from './utils';
-import { forceManyBody } from 'd3';
 
 const w = window.innerWidth * .69;
 const h = window.innerHeight;
@@ -97,12 +96,6 @@ const main = async () => {
         '#851de0'
     ]
 
-    const colorSet20 = [
-        '#39375b',
-        '#745c97',
-        '#de6b35',
-        '#851de0'
-    ]
 
     const column = document.getElementById('column');
 
