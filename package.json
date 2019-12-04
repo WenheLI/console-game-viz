@@ -5,7 +5,8 @@
     },
     "dependencies": {
         "@types/d3": "^5.7.2",
-        "d3": "^5.14.1"
+        "d3": "^5.14.1",
+        "throttle-debounce": "^2.1.0"
     },
     "devDependencies": {
         "parcel": "^1.12.4",

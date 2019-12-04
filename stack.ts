@@ -39,43 +39,43 @@ const colorScheme = [
 
 const makeClip = (viz, target) => {
     return viz.append("clipPath")
-            .attr("id", `clip-${target}`)
-            .append("rect")
-            .attr("width", 0)
-            .attr("height", h);
+        .attr("id", `clip-${target}`)
+        .append("rect")
+        .attr("width", 0)
+        .attr("height", h);
 }
 
-const makeLabel = (labels: any, i: number, x: number, y: number, text: string, isOpa=true) => {
+const makeLabel = (labels: any, i: number, x: number, y: number, text: string, isOpa = true) => {
     const dot = labels.append('g')
-            .attr('class', 'dots')
-            .attr('id', `label-${text}`)
-            .on('mouseenter', () => {
-                d3.selectAll('.layer').transition().duration(500).style('opacity', .1);
-                if (text === 'atari') d3.select(`.layer-2600`).transition().duration(500).style('opacity', 1)
-                d3.select(`.layer-${text}`).transition().duration(500).style('opacity', 1)
-            })
-            .on('mouseleave', () => {
-                d3.selectAll('.layer').transition().duration(500).style('opacity', 1);
-            })
-            .style('opacity', isOpa ? 0 : 1);
+        .attr('class', 'dots')
+        .attr('id', `label-${text}`)
+        .on('mouseenter', () => {
+            d3.selectAll('.layer').transition().duration(500).style('opacity', .1);
+            if (text === 'atari') d3.select(`.layer-2600`).transition().duration(500).style('opacity', 1)
+            d3.select(`.layer-${text}`).transition().duration(500).style('opacity', 1)
+        })
+        .on('mouseleave', () => {
+            d3.selectAll('.layer').transition().duration(500).style('opacity', 1);
+        })
+        .style('opacity', isOpa ? 0 : 1);
 
 
-        dot.append('circle')
+    dot.append('circle')
         .attr('cx', x)
         .attr('cy', y)
         .attr('r', 5)
-        .style('fill', colorScheme[i] )
+        .style('fill', colorScheme[i])
 
-        dot.append('text')
+    dot.append('text')
         .attr('x', x + 10)
         .attr('y', y)
         .text(text)
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style('fill', colorScheme[i] )
+        .style('fill', colorScheme[i])
 }
 
-const makeUpdate = (xScale, yScale, selectData, xAxisGroup, yAxisGroup, areaChart, area) => {
+const makeUpdate = (xScale, yScale, selectData, xAxisGroup, yAxisGroup, areaChart, area, update = true) => {
     xScale.domain(currScale.map((it) => yearParser(it)));
     const yMax = d3.max(selectData, (d) => d.sales);
     yScale.domain([0, yMax])
@@ -83,8 +83,10 @@ const makeUpdate = (xScale, yScale, selectData, xAxisGroup, yAxisGroup, areaChar
         .call(d3.axisLeft(yScale));
     xAxisGroup
         .call(d3.axisBottom(xScale));
-    areaChart.selectAll('.layer')
-        .attr('d', area)
+    if (update) {
+        areaChart.selectAll('.layer')
+            .attr('d', area)
+    }
     // areaChart.selectAll('.line')
     //     .attr('d', lineMaker)
 
@@ -109,20 +111,18 @@ const main = async () => {
         rawData,
         data
     } = await processData();
-    document.getElementById('column').style.overflowY = 'auto'
-    document.getElementById('scroller').animate([
-        {
-            opacity: 0
+    document.getElementById('column').style.overflowY = 'auto';
+    document.getElementById('wait-desc').animate([{
+            opacity: 1
         },
         {
-            opacity: 1
+            opacity: 0
         }
     ], {
         duration: 1000,
         fill: 'forwards'
     });
-    document.getElementById('first-desc').animate([
-        {
+    document.getElementById('scroller').animate([{
             opacity: 0
         },
         {
@@ -130,6 +130,18 @@ const main = async () => {
         }
     ], {
         duration: 1000,
+        delay: 1000,
+        fill: 'forwards'
+    });
+    document.getElementById('first-desc').animate([{
+            opacity: 0
+        },
+        {
+            opacity: 1
+        }
+    ], {
+        duration: 1000,
+        delay: 1000,
         fill: 'forwards'
     })
     const years = Array.from(new Set(rawData.map((it) => it.yearOfRelease)))
@@ -163,7 +175,7 @@ const main = async () => {
     console.log(allPlatforms)
     let stackData = d3.stack()
         .keys(allPlatforms)(flattenData);
-    const colorScale = d3.scaleSequential().domain([0,allPlatforms.length - 1]).interpolator(d3.interpolateTurbo);
+    const colorScale = d3.scaleSequential().domain([0, allPlatforms.length - 1]).interpolator(d3.interpolateTurbo);
     let yMax = d3.max(selectData, (d) => d.sales);
     const xDomain = d3.extent(selectData, (d) => d.year);
     const yDomain = [0, yMax];
@@ -224,11 +236,11 @@ const main = async () => {
         .attr('stroke-width', '2px')
         .style('fill', 'none')
 
-        const globalLine = viz.select('.global');
-        const globalNode = globalLine.node() as SVGPathElement;
-        const length = globalNode.getTotalLength();
-        const scale = d3.scaleLinear().domain([0, window.innerHeight]).range([length, 0]);
-        globalLine.attr("stroke-dasharray", length + " " + length)
+    const globalLine = viz.select('.global');
+    const globalNode = globalLine.node() as SVGPathElement;
+    const length = globalNode.getTotalLength();
+    const scale = d3.scaleLinear().domain([0, window.innerHeight]).range([length, 0]);
+    globalLine.attr("stroke-dasharray", length + " " + length)
         .attr("stroke-dashoffset", length);
 
     makeLabel(labels, 0, 10, 10, 'atari');
@@ -237,17 +249,17 @@ const main = async () => {
     makeLabel(labels, 3, 230, 10, 'GB');
     let x = 280;
     let y = 10;
-    [ "PC", "DS", "GEN", "GG", "SCD", "NG", "PS", "SAT" ].forEach((it, i) => {
-        makeLabel(labels, i+4, x, y, it);
-        x += 80;
+    ["PC", "DS", "GEN", "GG", "SCD", "NG", "PS", "SAT"].forEach((it, i) => {
+        makeLabel(labels, i + 4, x, y, it);
+        x += 80;
         if (x > 800) {
             x = 10;
             y += 30;
         }
     });
     ["3DO", "TG16", "N64", "PCFX", "DC", "WS", "PS2", "XB", "GBA", "GC"].forEach((it, i) => {
-        makeLabel(labels, i+12, x, y, it);
-        x += 80;
+        makeLabel(labels, i + 12, x, y, it);
+        x += 80;
         if (x > 800) {
             x = 10;
             y += 30;
@@ -255,29 +267,50 @@ const main = async () => {
     });
     const opacityScale = d3.scaleLinear().domain([0, window.innerHeight]).range([0, 1]);
 
+    const nesClip = d3.select('#clip-nes rect');
+    const snesClip = d3.select('#clip-snes rect');
+    const gbClip = d3.select('#clip-gb rect')
+    const stage3Clips = ["PC", "DS", "GEN", "GG", "SCD", "NG", "PS", "SAT"].map((it) => {
+        return d3.select(`#clip-${it} rect`);
+    });
+    const stage4Clips = ["3DO", "TG16", "N64", "PCFX", "DC", "WS", "PS2", "XB", "GBA", "GC"].map((it => {
+        return d3.select(`#clip-${it} rect`);
+    }))
+    const stage2Clips = [nesClip, snesClip, gbClip];
     const column = document.getElementById('column');
     column.addEventListener('scroll', (e) => {
         const pageNum = Math.floor(column.scrollTop / window.innerHeight);
         let op = opacityScale(column.scrollTop % window.innerHeight);
+        const atariScale = d3.scaleLinear().domain([0, window.innerHeight]).range([0, xScale(yearParser('1992'))]);
+        const atariClip = d3.select('#clip-2600 rect')
+        const nesScale = d3.scaleLinear().domain([0, window.innerHeight]).range([xScale(yearParser('1982')), xScale(yearParser('1995'))]);
+        const trans9010 = d3.scaleLinear().domain([0, window.innerHeight]).range([1995, 2004]);
 
         switch (pageNum) {
             case 0:
-
+                [stage4Clips, stage3Clips, stage2Clips].forEach((clips) => {
+                    clips.forEach((it) => it.attr("width", 0));
+                });
+                atariClip.attr("width", 0)
                 globalLine.attr("stroke-dashoffset", scale(column.scrollTop));
                 break;
             case 1:
-                const atariScale = d3.scaleLinear().domain([0, window.innerHeight]).range([0, xScale(yearParser('1992'))]);
-                const atariClip = d3.select('#clip-2600 rect')
+                [stage4Clips, stage3Clips, stage2Clips].forEach((clips) => {
+                    clips.forEach((it) => it.attr("width", 0));
+                });
+                globalLine.attr("stroke-dashoffset", 0);
                 atariClip.attr("width", atariScale(column.scrollTop % window.innerHeight));
                 d3.select('#label-atari').style('opacity', opacityScale(column.scrollTop % window.innerHeight));
                 // d3.select('#label-atari').style('opacity', opacityScale(column.scrollTop % window.innerHeight));
-    
+
                 break;
             case 2:
-                const nesScale = d3.scaleLinear().domain([0, window.innerHeight]).range([ xScale(yearParser('1982')), xScale(yearParser('1995'))]);
-                const nesClip = d3.select('#clip-nes rect');
-                const snesClip = d3.select('#clip-snes rect');
-                const gbClip = d3.select('#clip-gb rect')
+                atariClip.attr('width', w - padding);
+                globalLine.attr("stroke-dashoffset", 0);
+
+                [stage4Clips, stage3Clips].forEach((clips) => {
+                    clips.forEach((it) => it.attr("width", 0));
+                })
                 nesClip.attr("width", nesScale(column.scrollTop % window.innerHeight));
                 snesClip.attr("width", nesScale(column.scrollTop % window.innerHeight));
                 gbClip.attr("width", nesScale(column.scrollTop % window.innerHeight));
@@ -286,25 +319,43 @@ const main = async () => {
                 d3.select('#label-gb').style('opacity', op);
                 break;
             case 3:
-                const other90 = d3.scaleLinear().domain([0, window.innerHeight]).range([ xScale(yearParser('1988')), xScale(yearParser('1995'))]);
-                [ "PC", "DS", "GEN", "GG", "SCD", "NG", "PS", "SAT" ].forEach((it) => {
-                    const clip = d3.select(`#clip-${it} rect`);
-                    clip.attr("width", other90(column.scrollTop % window.innerHeight));
+                globalLine.attr("stroke-dashoffset", 0);
+
+                [stage4Clips].forEach((clips) => {
+                    clips.forEach((it) => it.attr("width", 0));
+                })
+                stage2Clips.forEach((it) => it.attr('width', w - padding))
+                const other90 = d3.scaleLinear().domain([0, window.innerHeight]).range([xScale(yearParser('1988')), xScale(yearParser('1995'))]);
+                ["PC", "DS", "GEN", "GG", "SCD", "NG", "PS", "SAT"].forEach((it, i) => {
+                    stage3Clips[i].attr("width", other90(column.scrollTop % window.innerHeight));
                     d3.select(`#label-${it}`).style('opacity', op);
                 })
                 break;
             case 4:
-                const trans9010 = d3.scaleLinear().domain([0, window.innerHeight]).range([ 1995, 2004]);
-                const year =Math.floor(trans9010(column.scrollTop % window.innerHeight));
+                globalLine.attr("stroke-dashoffset", 0);
+
+                stage2Clips.forEach((it) => it.attr('width', w - padding))
+                stage3Clips.forEach((it) => it.attr('width', w - padding))
+                const year = Math.floor(trans9010(column.scrollTop % window.innerHeight));
                 currScale[1] = year;
-        
+
                 makeUpdate(xScale, yScale, selectData.filter((it) => it.year.getFullYear() <= year), xAxisGroup, yAxisGroup, areaChart, area);
                 const l = viz.select('.line');
                 const temp = salesData.filter((it) => it.year.getFullYear() <= trans9010(column.scrollTop % window.innerHeight));
                 l.attr('d', lineMaker(temp));
                 break;
             case 5:
-                const scale1 = d3.scaleLinear().domain([0, window.innerHeight]).range([ xScale(yearParser('1995')), xScale(yearParser('2004'))]);
+                globalLine.attr("stroke-dashoffset", 0);
+                // console.log(currScale)
+                // if (currScale[1] !== 2003) {
+                //     currScale[1] = 2003;
+                    // makeUpdate(xScale, yScale, selectData.filter((it) => it.year.getFullYear() <= 2003), xAxisGroup, yAxisGroup, areaChart, area, true);
+                // }
+
+                const scale1 = d3.scaleLinear().domain([0, window.innerHeight]).range([xScale(yearParser('1995')), xScale(yearParser('2004'))]);
+                stage2Clips.forEach((it) => it.attr('width', w - padding))
+                stage3Clips.forEach((it) => it.attr('width', w - padding))
+                stage4Clips.forEach((it) => it.attr('width', w - padding))
 
                 const platforms = ["3DO", "TG16", "N64", "PCFX", "DC", "WS", "PS2", "XB", "GBA", "GC"];
                 platforms.forEach((it) => {
