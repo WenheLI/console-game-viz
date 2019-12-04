@@ -109,7 +109,29 @@ const main = async () => {
         rawData,
         data
     } = await processData();
-
+    document.getElementById('column').style.overflowY = 'auto'
+    document.getElementById('scroller').animate([
+        {
+            opacity: 0
+        },
+        {
+            opacity: 1
+        }
+    ], {
+        duration: 1000,
+        fill: 'forwards'
+    });
+    document.getElementById('first-desc').animate([
+        {
+            opacity: 0
+        },
+        {
+            opacity: 1
+        }
+    ], {
+        duration: 1000,
+        fill: 'forwards'
+    })
     const years = Array.from(new Set(rawData.map((it) => it.yearOfRelease)))
         .filter((it) => it !== 'N/A')
         .filter((it) => it !== '2017')

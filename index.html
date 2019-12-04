@@ -49,7 +49,7 @@
         .column {
             width: 30%;
             height: 100%;
-            overflow-y: auto;
+            overflow-y: hidden;
             justify-content: space-around;
         }
 
@@ -99,6 +99,7 @@
             animation: jump 2s ease-in-out infinite alternate;
             display: flex;
             flex-direction: column;
+            opacity: 0;
         }
 
         h2 {
@@ -130,6 +131,10 @@
             cursor: pointer;
         }
 
+        #first-desc {
+            opacity: 0;
+        }
+
         #triangle {
         }
     </style>
@@ -154,7 +159,7 @@
                         </svg>
                     </div>
                 </div>
-                <div>
+                <div id="first-desc">
                     <h2>The darkage of Console Game.</h2>
                     <p>From 1980 to 1995, the global console game sales went up and down. The future of the console game
                         at that time was not clear.</p>
