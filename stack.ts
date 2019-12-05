@@ -14,27 +14,27 @@ const currScale = [1980, 1995];
 
 const colorScheme = [
     "#4c5270",
-    "#C26DBC",
-    "#36EEE0",
-    "#EDC1BB",
+    "#FC6600",
+    "#FDA50F",
+    "#EF7215",
     "#0C6980",
     "#C4DBE0",
     "#CE2380",
     "#2D3A3E",
     "#DEE2EC",
     "#8C756A",
+    "#98FB98",
     "#EEB5EB",
-    "#C6D830",
     "#A3EBB1",
     "#AE8B70",
-    "#543855",
+    "#813F0B",
     "#81B622",
     "#21B6A8",
     "#73D9F0",
-    "#F7B301",
-    "#EB773E",
-    "#B7A1A6",
-    "#854B5B"
+    "#D0F0C0",
+    "#0080FE",
+    "#DBA520",
+    "#C49102"
 ]
 
 const makeClip = (viz, target) => {
@@ -80,11 +80,17 @@ const makeUpdate = (xScale, yScale, selectData, xAxisGroup, yAxisGroup, areaChar
     const yMax = d3.max(selectData, (d) => d.sales);
     yScale.domain([0, yMax])
     yAxisGroup
+        .transition()
+        .duration(80)
         .call(d3.axisLeft(yScale));
     xAxisGroup
+        .transition()
+        .duration(80)
         .call(d3.axisBottom(xScale));
     if (update) {
         areaChart.selectAll('.layer')
+            .transition()
+            .duration(80)
             .attr('d', area)
     }
     // areaChart.selectAll('.line')
@@ -198,6 +204,7 @@ const main = async () => {
     yAxisGroup.call(yAxis);
 
 
+
     const clip = viz.append("defs").append("svg:clipPath")
         .attr("id", "clip")
         .append("svg:rect")
@@ -236,6 +243,49 @@ const main = async () => {
         .attr('stroke-width', '2px')
         .style('fill', 'none')
 
+
+    viz.append('g')
+        .attr('class', 'iamges')
+        .append('image')
+        .attr('id', 'pac')
+        .attr('xlink:href', './pac.png')
+        .attr('width', '120px')
+        .attr('height', '120px')
+        .attr('x', xScale(yearParser('1981')) - 60)
+        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1999)[0].sales) - 60)
+        .style('opacity', 0)
+
+    const donkey = viz.append('g')
+        .attr('class', 'iamges')
+        .append('image')
+        .attr('id', 'pac')
+        .attr('xlink:href', './donkey.png')
+        .attr('width', '120px')
+        .attr('height', '120px')
+        .attr('x', xScale(yearParser('1985')) - 60)
+        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1999)[0].sales) - 80)
+        .style('opacity', 0)
+    const mario = viz.append('g')
+        .attr('class', 'iamges')
+        .append('image')
+        .attr('id', 'pac')
+        .attr('xlink:href', './mario.png')
+        .attr('width', '120px')
+        .attr('height', '120px')
+        .attr('x', xScale(yearParser('1989')) - 60)
+        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1999)[0].sales) - 80)
+        .style('opacity', 0);
+
+    const pokemon = viz.append('g')
+        .attr('class', 'iamges')
+        .append('image')
+        .attr('id', 'pac')
+        .attr('xlink:href', './pokemon.png')
+        .attr('width', '120px')
+        .attr('height', '120px')
+        .attr('x', xScale(yearParser('1992')) - 60)
+        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1999)[0].sales) - 80)
+        .style('opacity', 0)
     const globalLine = viz.select('.global');
     const globalNode = globalLine.node() as SVGPathElement;
     const length = globalNode.getTotalLength();
@@ -275,13 +325,142 @@ const main = async () => {
     });
     const stage4Clips = ["3DO", "TG16", "N64", "PCFX", "DC", "WS", "PS2", "XB", "GBA", "GC"].map((it => {
         return d3.select(`#clip-${it} rect`);
-    }))
+    }));
+
+    const shockText = viz.append('text')
+        .text('Shock ...')
+        .style('font-size', 18)
+        .style('font-weight', 'bold')
+        .attr('x', xScale(yearParser('1983')) - 60)
+        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1999)[0].sales) - 130)
+        .style('opacity', 0)
+
     const stage2Clips = [nesClip, snesClip, gbClip];
     const column = document.getElementById('column');
+    const io = new IntersectionObserver((e) => {
+        e.forEach((it) => {
+            if (it.target.id === 'pac-desc') {
+                const pac = d3.select('#pac');
+                if (it.isIntersecting) {
+                    document.getElementById('pac-desc-span').animate([{
+                            backgroundColor: 'white'
+                        },
+                        {
+                            backgroundColor: '#FFF700'
+                        }
+                    ], {
+                        duration: 1000,
+                        iterations: 2,
+                        easing: 'ease-in-out'
+                    })
+                    pac
+                        .transition()
+                        .duration(2000)
+                        .style('opacity', 1)
+                        .ease(d3.easeBounce)
+                        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1981)[0].sales) - 110)
+                } else {
+                    pac
+                        .transition()
+                        .duration(800)
+                        .style('opacity', 0)
+                }
+            } else if (it.target.id === 'shock') {
+                if (it.boundingClientRect.top < 0) {
+                    shockText
+                        .transition()
+                        .duration(2000)
+                        .style('opacity', 1)
+                        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1983)[0].sales) - 130)
+                        .on('end', () => {
+                            console.log(1)
+                            shockText.transition()
+                                .delay(1000)
+                                .style('opacity', 0)
+                        })
+                }
+            } else if (it.target.id === 'donkey') {
+                if (it.isIntersecting) {
+
+                } else {
+
+                }
+            } else if (it.target.id === 'mario') {
+                if (it.isIntersecting) {
+                    document.getElementById('mario-span').animate([{
+                            backgroundColor: 'white'
+                        },
+                        {
+                            backgroundColor: '#FFF700'
+                        }
+                    ], {
+                        duration: 1000,
+                        iterations: 2,
+                        easing: 'ease-in-out'
+                    })
+                    mario
+                        .transition()
+                        .duration(2000)
+                        .style('opacity', 1)
+                        .ease(d3.easeBounce)
+                        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1985)[0].sales) - 160)
+                    document.getElementById('donkey-span').animate([{
+                            backgroundColor: 'white'
+                        },
+                        {
+                            backgroundColor: '#FFF700'
+                        }
+                    ], {
+                        duration: 1000,
+                        iterations: 2,
+                        easing: 'ease-in-out'
+                    })
+                    donkey
+                        .transition()
+                        .duration(2000)
+                        .style('opacity', 1)
+                        .ease(d3.easeBounce)
+                        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1985)[0].sales) - 130)
+
+                    pokemon
+                        .transition()
+                        .duration(2000)
+                        .style('opacity', 1)
+                        .ease(d3.easeBounce)
+                        .attr('y', yScale(selectData.filter((it) => it.year.getFullYear() === 1992)[0].sales) - 100)
+                } else {
+                    mario
+                        .transition()
+                        .duration(800)
+                        .style('opacity', 0)
+
+                    donkey
+                        .transition()
+                        .duration(800)
+                        .style('opacity', 0)
+
+                    pokemon
+                        .transition()
+                        .duration(800)
+                        .style('opacity', 0)
+                }
+            } else if (it.target.id === 'percentage') {
+                if (it.boundingClientRect.top < 0) {
+                    d3.selectAll('layer').transition().style('opacity', 0)
+                    d3.select('layer-PS').transition().style('opacity', 1)
+                }
+            }
+        })
+    })
+    io.observe(document.getElementById('pac-desc'));
+    io.observe(document.getElementById('shock'));
+    io.observe(document.getElementById('mario'));
+    io.observe(document.getElementById('percentage'))
+
     column.addEventListener('scroll', (e) => {
         const pageNum = Math.floor(column.scrollTop / window.innerHeight);
         let op = opacityScale(column.scrollTop % window.innerHeight);
-        const atariScale = d3.scaleLinear().domain([0, window.innerHeight]).range([0, xScale(yearParser('1992'))]);
+        const atariScale = d3.scaleLinear().domain([0, window.innerHeight]).range([0, xScale(yearParser('1990'))]);
         const atariClip = d3.select('#clip-2600 rect')
         const nesScale = d3.scaleLinear().domain([0, window.innerHeight]).range([xScale(yearParser('1982')), xScale(yearParser('1995'))]);
         const trans9010 = d3.scaleLinear().domain([0, window.innerHeight]).range([1995, 2004]);
@@ -298,9 +477,10 @@ const main = async () => {
                 [stage4Clips, stage3Clips, stage2Clips].forEach((clips) => {
                     clips.forEach((it) => it.attr("width", 0));
                 });
+                const pacOp = opacityScale(column.scrollTop % window.innerHeight);
                 globalLine.attr("stroke-dashoffset", 0);
                 atariClip.attr("width", atariScale(column.scrollTop % window.innerHeight));
-                d3.select('#label-atari').style('opacity', opacityScale(column.scrollTop % window.innerHeight));
+                d3.select('#label-atari').style('opacity', pacOp);
                 // d3.select('#label-atari').style('opacity', opacityScale(column.scrollTop % window.innerHeight));
 
                 break;
@@ -349,10 +529,16 @@ const main = async () => {
                 // console.log(currScale)
                 // if (currScale[1] !== 2003) {
                 //     currScale[1] = 2003;
-                    // makeUpdate(xScale, yScale, selectData.filter((it) => it.year.getFullYear() <= 2003), xAxisGroup, yAxisGroup, areaChart, area, true);
+                // makeUpdate(xScale, yScale, selectData.filter((it) => it.year.getFullYear() <= 2003), xAxisGroup, yAxisGroup, areaChart, area, true);
                 // }
+                const year1 = 2003;
+                currScale[1] = year1;
 
+                makeUpdate(xScale, yScale, selectData.filter((it) => it.year.getFullYear() <= year1), xAxisGroup, yAxisGroup, areaChart, area);
                 const scale1 = d3.scaleLinear().domain([0, window.innerHeight]).range([xScale(yearParser('1995')), xScale(yearParser('2004'))]);
+                const l1 = viz.select('.line');
+                const temp1 = salesData.filter((it) => it.year.getFullYear() <= 2003);
+                l1.attr('d', lineMaker(temp1));
                 stage2Clips.forEach((it) => it.attr('width', w - padding))
                 stage3Clips.forEach((it) => it.attr('width', w - padding))
                 stage4Clips.forEach((it) => it.attr('width', w - padding))

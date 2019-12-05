@@ -6,6 +6,7 @@
     "dependencies": {
         "@types/d3": "^5.7.2",
         "d3": "^5.14.1",
+        "jquery-appear-original": "^0.6.2",
         "throttle-debounce": "^2.1.0"
     },
     "devDependencies": {
