@@ -137,6 +137,19 @@
 
         #triangle {
         }
+
+        .img-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 50%;
+        }
+        .img-container label {
+            align-self: center;
+        }
+        .highlight {
+            color: coral;
+        }
     </style>
 
 </head>
@@ -147,7 +160,7 @@
 
         </div>
         <div id="column" class="column">
-            <div id="first" class="page">
+            <div id="first" class="page" >
                 <div class="row-container">
                     <h1>Console Game Industry <br/> From 1980 to 2003</h1>
                    
@@ -170,17 +183,20 @@
                     <br />
                 </div>
             </div>
-            <div class="page">
+            <div class="page" style="margin-top: 100%;">
                 <div style="margin-top: 20%;">
                     <h2>Here comes Atari!</h2>
                     <img src="./data/atari.svg" alt="" srcset="">
                     <div>
                         <p id="shock">Atari was the only game-console at early 80s. </p>
-                        <img src="./data/atari.jpeg" alt="">
+                        <div class="img-container" style="margin: auto;">
+                            <img src="./data/atari.jpeg" alt="">
+                            <label for="">Atari</label>
+                        </div>
                         <p id="pac-desc">In 1981, the most famous game <span id="pac-desc-span">Pac-man</span> lead to a peak of Atari game salse!</p>
                         <p>However, Atari did not control their game quality and allowed game developers to copy a game and rebrand it. </p>
-                        <p> This finally resulted in Atari Shock, a video game crash happening at 1982 - 1984.</p>
-                        <p>At the end, Atari bankrupted ...</p>
+                        <p> This finally resulted in Atari Shock, a <span class="highlight">video game crash</span> happening at 1982 - 1984.</p>
+                        <p>At the end, Atari <span class="highlight">bankrupted ...</span></p>
                     </div>
                 </div>
 
@@ -190,17 +206,23 @@
                 <div>
                     <h2>Long live Nintendo!</h2>
                     <div  style="max-height: 100%; display: flex; flex-direction: row;">
-                        <img style="width: 50%" src="./data/nes.jpg" alt="" srcset="">
-                        <img style="width: 50%;" src="./data/gb.jpg" alt="" srcset="">
+                        <div class="img-container">
+                            <img src="./data/nes.jpg" alt="" srcset="">
+                            <label for="">NES</label>
+                        </div>
+                        <div class="img-container">
+                            <img src="./data/gb.jpg" alt="" srcset="">
+                            <label for="">Game Body(GB)</label>
+                        </div>
                     </div>
 
                     <div>
                         <p>After this shock, Nintendo took the chance and made a commerical success with three consoles NES, Super NES, and Game Body(GB) in the following 10 years.</p>
-                        <p>To aviod the Atari Shock, Nintendo was applying a higher tax for games published on NES and
+                        <p>To aviod the <span class="highlight">Atari Shock</span>, Nintendo was applying a <span class="highlight"></span> higher tax</span> for games published on NES and
                             SNES. In this way, game developers would put more time on how to imporve game quality.</p>
                             <p >During this time, the <span id="donkey-span">Donkey Franchise</span>  and <span id="mario-span">Mario Franchise</span> became the most popular game series.</p>
                             <br>
-                        <p id="donkey">However, the monoploy position and restrict rule left resistance among game developers ...
+                        <p id="donkey">However, the <span class="highlight">monoploy</span>  position and restrict rule left resistance among game developers ...
                         </p>
                     </div>
                 </div>
@@ -213,8 +235,14 @@
                 <div>
                     <h2>Nintendo is evil!</h2>
                     <div style="display: flex; flex-direction: row; margin-bottom: 30%;">
-                        <img style="width: 50%;" src="./data/gen.jpeg" alt="">
-                        <img style="width: 50%;" src="./data/ps1.jpg" alt="">
+                        <div class="img-container">
+                            <img style="width: 100%;" src="./data/gen.jpeg" alt="">
+                            <label for="">Sega Gensis</label>
+                        </div>
+                        <div class="img-container">
+                            <img style="width: 100%;" src="./data/ps1.jpg" alt="">
+                            <label for="">Sony PlayStation(PS)</label>
+                        </div>
 
                     </div>
                     <p>With the high-pressure policy Nintendo were using, more and more game companies started to
@@ -225,19 +253,32 @@
                 </div>
             </div>
 
-            <div class="page">
+            <div class="page" >
                 <p></p>
 
-                <div style="margin-top: 30%;">
+                <div>
                     <h2 id="percentage">New Age</h2>
                     <p>Years later ...</p>
-                    <p>Sony and its PlayStation 1 took the market with almost 80% of total maker share!</p>
+                    <p>Sony and its PlayStation 1 took the market with almost <span class="highlight">80% of total maker share</span> !</p>
                     <p>This also lead to a rapid growth in the game market.</p>
-                    <p>Big titles like NBA, FiFA, Street Fighter, and Metal Gear Solid were in the platform.</p>
+                    <p>Big titles like <span class="highlight">NBA, FiFA, Street Fighter, and Metal Gear Solid</span>  were in the platform.</p>
                     <div style="display: flex; flex-direction: row;">
-                        <img style="width: 33%" src="./data/re.png" alt="">
-                        <img  style="width: 33%"  src="./data/mgs.png" alt="">
-                        <img  style="width: 33%"  src="./data/sf.png" alt="">
+                        <div style="width: 33%"  class="img-container">
+                            <img src="./data/re.png" alt="">
+                            <label for="">Resident Evil on PS</label>
+
+                        </div>
+                        <div style="width: 33%"  class="img-container">
+                            <img   src="./data/mgs.png" alt="">
+                            
+                            <label for="">Metal Gear Solid on PS</label>
+
+                        </div>
+                        <div style="width: 33%"  class="img-container">
+                            <img src="./data/sf.png" alt="">
+                            <label for="">Stright Fighter on PS</label>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -253,15 +294,31 @@
                 
             </div>
             <div class="page">
-                <div style="display: flex; flex-direction: row; flex-shrink: 1;">
-                        <img style="width: 33%" src="./data/ps2.jpg" alt="">
-                        <img  style="width: 33%"  src="./data/xbox.gif" alt="">
-                        <img  style="width: 33%"  src="./data/gc.jpg" alt="">
+                <div style="display: flex; flex-direction: row; flex-shrink: 1; margin-top: 15%;">
+                    <div class="img-container" style="width: 33%;">
+                        <img src="./data/ps2.jpg" alt="">
+                        <label for="">PlayStation 2</label>
+                    </div>
+                    <div class="img-container" style="width: 33%;">
+                        <img src="./data/xbox.gif" alt="">
+                        <label for="">Xbox</label>
+
+                    </div>
+                    <div class="img-container" style="width: 33%;">
+                        <img src="./data/gc.jpg" alt="">
+                        <label for="">Game Cube</label>
+                    </div>
 
                 </div>
                 <div style="display: flex; flex-direction: row; flex-shrink: 1;">
-                        <img style="width: 33%" src="./data/gba.jpg" alt="">
-                        <img  style="width: 33%"  src="./data/n64.jpg" alt="">
+                    <div class="img-container" style="width: 50%;">
+                        <img  src="./data/gba.jpg" alt="">
+                        <label for="">Game Body Advance</label>
+                    </div>
+                    <div class="img-container" style="width: 50%;">
+                        <img   src="./data/n64.jpg" alt="">
+                        <label for="">N64</label>
+                    </div>   
                 </div>
                 <div>
                    <h2>Explore more with the data</h2>

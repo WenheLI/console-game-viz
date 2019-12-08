@@ -193,15 +193,39 @@ const main = async () => {
     const xAxisGroup = viz.append("g")
         .attr("class", "xaxisgroup")
         .style('font-family', `'Press Start 2P', cursive`)
+        .style('font-size', 14)
+        .style('font-weight', '900')
         .attr("transform", "translate(0," + (h - padding) + ")");
     xAxisGroup.call(xAxis);
+
+    viz.append("text")             
+    .attr("transform",
+          "translate(" + (w/2) + " ," + 
+                         (h - padding + 50) + ")")
+    .style("text-anchor", "middle")
+    .style('font-family', `'Press Start 2P', cursive`)
+    .style('font-size', 18)
+    .style('font-weight', '900')
+    .text("Years");
+
 
     const yAxis = d3.axisLeft(yScale);
     const yAxisGroup = viz.append("g")
         .attr("class", "yaxisgroup")
         .style('font-family', `'Press Start 2P', cursive`)
-        .attr("transform", "translate(" + (padding / 2) + ",0)");
+        .style('font-size', 14)
+        .style('font-weight', '900')
+        .attr("transform", "translate(" + (2*padding / 3) + ",0)");
     yAxisGroup.call(yAxis);
+    viz.append("text")
+        .attr("dy", "1em")
+        .style('transform-origin', `${padding/3}px ${h/2}px`)
+           .style("transform", `rotate(90deg) translate(${padding/3}px, ${h/2}px)`)
+           .style('font-family', `'Press Start 2P', cursive`)
+           .style('font-size', 16)
+           .style('font-weight', '900')
+        .style("text-anchor", "middle")
+        .text("Sales (the number of game copies) in Million");      
 
 
 
@@ -545,7 +569,8 @@ const main = async () => {
 
                 const platforms = ["3DO", "TG16", "N64", "PCFX", "DC", "WS", "PS2", "XB", "GBA", "GC"];
                 platforms.forEach((it) => {
-                    d3.select(`#clip-${it} rect`).attr('width', scale1(column.scrollTop % window.innerHeight))
+                    const width = scale1((column.scrollTop) % window.innerHeight) >= xScale(yearParser('2003')) ?xScale(yearParser('2003')) : scale1((column.scrollTop) % window.innerHeight) 
+                    d3.select(`#clip-${it} rect`).attr('width',width )
                     d3.select(`#label-${it}`).style('opacity', op);
                 });
                 break;
